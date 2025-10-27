@@ -1,0 +1,39 @@
+forward:-
+
+:- dynamic fact/1.
+
+fact(a).
+fact(b).
+rule([a,b], c).
+rule([c], d).
+
+forward :-
+    rule(Conds, Head),
+    \+ fact(Head),
+    forall(member(C, Conds), fact(C)),
+    assertz(fact(Head)),
+    format('Derived: ~w~n', [Head]),
+    forward.
+forward.
+
+run - forward, listing(fact).
+
+
+backward:-
+
+goal(X) :- 
+	fact(X).
+goal(X) :- 
+	myrule(X, Premises), prove_all(Premises).
+
+prove_all([]).
+prove_all([H|T]) :- 
+	goal(H), prove_all(T).
+
+fact(a).
+fact(b).
+
+myrule(c, [a, b]).
+myrule(d, [c]).
+
+run - goal(d)
