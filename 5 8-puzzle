@@ -1,0 +1,32 @@
+% Move: try to swap the blank with a neighbor
+move(S, N) :- swap(S, N, -1).   % left
+move(S, N) :- swap(S, N, 1).    % right
+move(S, N) :- swap(S, N, -3).   % up
+move(S, N) :- swap(S, N, 3).    % down
+
+% Swap helper
+swap(S, NewS, D) :-
+    nth0(P, S, 0),                 % find blank position
+    Q is P + D,
+    between(0,8,Q),                % ensure index is valid
+    \+ invalid(P, Q, D),           % avoid row wrapping
+    nth0(Q, S, X),
+    replace(S, P, X, T),           % replace blank position with tile
+    replace(T, Q, 0, NewS).        % replace tile position with blank
+
+% Prevent invalid left/right moves
+invalid(P, Q, D) :-
+    (D = -1, P mod 3 =:= 0);
+    (D = 1, Q mod 3 =:= 0).
+
+% Replace element in list at position N
+replace([_|T], 0, X, [X|T]).
+replace([H|T], I, X, [H|R]) :-
+    I > 0,
+    I1 is I - 1,
+    replace(T, I1, X, R).
+
+% Goal state
+goal([1,2,3,4,5,6,7,8,0]).
+
+run - ([1,2,3,4,0,5,6,7,8], N).
