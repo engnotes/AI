@@ -1,0 +1,38 @@
+bfs :-
+
+e(a,b).
+e(a,c). 
+e(b,d). 
+e(b,e). 
+e(c,f). 
+e(c,g). 
+e(d,h). 
+e(d,i).
+
+bfs(S,G):-
+	bfsq([[S]],G).
+bfsq([[G|P]|_],G):-
+	reverse([G|P],R),writeln(R).
+bfsq([P|Ps],G):-
+	ext(P,Ns),append(Ps,Ns,Q),bfsq(Q,G).
+ext([N|P],Ns):-	
+	findall([X,N|P],(e(N,X),\+member(X,[N|P])),Ns).
+
+run - bfs(a,f)
+
+
+dfs:-
+
+e(a,b). 
+e(a,c). 
+e(b,d). 
+e(b,e). 
+e(c,f).
+
+dfs(S,G):-
+	dfsh(S,G,[],P),reverse(P,R),writeln(R).
+dfsh(G,G,V,[G|V]).
+dfsh(S,G,V,P):-
+	e(S,X),\+member(X,V),dfsh(X,G,[S|V],P).
+
+run - dfs(a,f)
