@@ -1,0 +1,22 @@
+% --- Initial and Goal States ---
+initial([at(room1), clean(room2), handempty]).
+goal([at(room2)]).
+
+% --- Actions ---
+action(move(X,Y), [at(X)], [at(Y)], [at(X)]).
+action(pickup, [at(room2), handempty], [holding(dust)], [handempty, clean(room2)]).
+action(drop, [holding(dust)], [handempty], [holding(dust)]).
+
+% --- Planner ---
+plan(State, Goal, []) :- subset(Goal, State), !.
+plan(State, Goal, [Act|Rest]) :-
+    action(Act, Pre, Add, Del),
+    subset(Pre, State),
+    subtract(State, Del, Temp),
+    union(Add, Temp, NewState),
+    plan(NewState, Goal, Rest).
+
+% --- Run ---
+run :- initial(S), goal(G), plan(S, G, P), write('Plan: '), write(P), nl.
+
+cmd - run.
