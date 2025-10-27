@@ -1,0 +1,28 @@
+initial_state([1,2,3,4]).
+
+evaluate(S,V) :- sum_list(S,V).
+
+generate_neighbor(S,N) :-
+    select(X,S,R),
+    member(Y,[1,2,3,4]),
+    X \= Y,
+    permutation([Y|R],N).
+
+hill_climb :-
+    initial_state(S),
+    climb(S).
+
+climb(S) :-
+    evaluate(S,V),
+    ( \+ generate_neighbor(S,_)
+    -> format('Reached local optimum: ~w (Value = ~w)~n',[S,V])
+    ;  generate_neighbor(S,N),
+       evaluate(N,VN),
+       ( VN > V ->
+         format('Moving to better neighbor: ~w (Value = ~w)~n',[N,VN]),
+         climb(N)
+       ; format('No better neighbor found from ~w (Value = ~w)~n',[S,V])
+       )
+    ).
+
+run - hill_climb.
